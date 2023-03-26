@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:telegram_clone/components/home/drawer/DrawerListTile.dart';
-import 'package:telegram_clone/components/home/drawer/DrawerUserListTile.dart';
+import 'package:nostrim/components/home/drawer/DrawerListTile.dart';
+import 'package:nostrim/components/home/drawer/DrawerUserListTile.dart';
 
 class DrawerScreen extends StatefulWidget {
   DrawerScreen({Key? key}) : super(key: key);
@@ -105,7 +105,7 @@ class DrawerScreenState extends State<DrawerScreen> {
             onTap: () {},
           ),
           DrawerListTile(
-            title: "Telegram Features",
+            title: "Nostrim Features",
             icon: Icons.info_outline_rounded,
             onTap: () {},
           ),

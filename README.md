@@ -1,4 +1,4 @@
-# telegram_clone
+# nostrim
 
 Hello there,
 I tried to write clone of telegram in this application. I will prepare the whole design of telegram and present it to the public, you can have it develop it by cloning it. if you want to create your own telegram i would like you to take a look at [tdlib](https://pub.dev/packages/tdlib) i hope it will be useful application for you
@@ -8,7 +8,7 @@ I tried to write clone of telegram in this application. I will prepare the whole
 `gh repo clone ofarukbicer/telegram-clone` or `git clone https://github.com/ofarukbicer/telegram-clone.git`
 
 ### Changed application name
-Set the `android:label="Telegram"` line, which is the `5th line` in the `@/android/app/src/AndroidManifest.xml` , according to you.
+Set the `android:label="Nostrim"` line, which is the `5th line` in the `@/android/app/src/AndroidManifest.xml` , according to you.
 
 ### Changed application icon
 To change the application icon, first go to the link, then design an icon for yourself and click the download button in the upper right corner to download a zip file. Copy all the folders named `res/mipmap-*` in the zip file and paste it in `@/android/app/src/res` and select replace all that's it
