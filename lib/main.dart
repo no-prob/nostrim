@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:telegram_clone/screens/home.dart';
-import 'package:telegram_clone/utils/color.dart';
+import 'screens/home.dart';
+import 'utils/color.dart';
 
 void main() {
   runApp(TelegramClone());

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 
 class DrawerUserListTile extends StatelessWidget {
   const DrawerUserListTile({
@@ -25,9 +25,9 @@ class DrawerUserListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: selected
-          ? Badge(
+          ? badges.Badge(
               badgeColor: Colors.green,
-              position: BadgePosition(bottom: -3, end: 0),
+              position: badges.BadgePosition(bottom: -3, end: 0),
               toAnimate: false,
               badgeContent: Icon(
                 Icons.done_rounded,
@@ -50,16 +50,18 @@ class DrawerUserListTile extends StatelessWidget {
             )
           : SizedBox.fromSize(
               size: Size(35, 35),
-              child: this.icon != null ? Icon(this.icon!) : CircleAvatar(
-                child: Center(
-                  child: Text(
-                    this.picture != "" ? "" : this.name.substring(0, 1),
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                backgroundImage: NetworkImage(this.picture!),
-                backgroundColor: this.backgroundColor,
-              ),
+              child: this.icon != null
+                  ? Icon(this.icon!)
+                  : CircleAvatar(
+                      child: Center(
+                        child: Text(
+                          this.picture != "" ? "" : this.name.substring(0, 1),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      backgroundImage: NetworkImage(this.picture!),
+                      backgroundColor: this.backgroundColor,
+                    ),
             ),
       title: Text(this.name),
       onTap: this.onTap,

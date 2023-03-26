@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:telegram_clone/utils/color.dart';
 
@@ -89,9 +89,9 @@ class UserMessage extends StatelessWidget {
                       ? 5
                       : 30),
           if (this.badge != "")
-            Badge(
+            badges.Badge(
               badgeColor: Colors.grey.shade400,
-              position: BadgePosition(bottom: -3, end: 0),
+              position: badges.BadgePosition(bottom: -3, end: 0),
               toAnimate: false,
               badgeContent: Text(
                 '45',
