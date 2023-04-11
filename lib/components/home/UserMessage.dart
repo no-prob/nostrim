@@ -1,5 +1,6 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
+
 import 'package:nostrim/utils/color.dart';
 
 class UserMessage extends StatelessWidget {

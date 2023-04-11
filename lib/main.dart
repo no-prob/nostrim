@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+
 import 'package:nostrim/screens/home.dart';
 import 'package:nostrim/utils/color.dart';
 
-void main() {
+import 'src/db/db.dart';
+
+
+Future<void> main() async {
+  final database = MyDatabase();
   runApp(Nostrim());
 }
 
@@ -21,3 +26,5 @@ class Nostrim extends StatelessWidget {
     );
   }
 }
+
+Future<void> connect_to_relays() async {}
