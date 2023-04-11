@@ -1,0 +1,3 @@
+[submodule "deps/dart-nostr"]
+	path = deps/dart-nostr
+	url = https://github.com/no-prob/dart-nostr.git
