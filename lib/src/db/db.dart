@@ -6,23 +6,17 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'tables.dart';
+import 'models.dart';
 part 'db.g.dart';
 
 
-@DriftDatabase(tables: [Todos, Categories])
-class MyDatabase extends _$MyDatabase {
-    MyDatabase() : super(_openConnection());
+@DriftDatabase(tables: [Users, Events])
+class AppDatabase extends _$AppDatabase {
+    AppDatabase() : super(_openConnection());
 
     @override
     int get schemaVersion => 1;
 
-    Future<List<Todo>> getTodoById(int id) => (select(todos)..where((t) => t.id.equals(id))).get();
-    Future<List<Todo>> getzAllTodos() => select(todos).get();
-    Stream<List<Todo>> watchAllTodos() => select(todos).watch();
-    Future insertTodo(TodosCompanion entry) => into(todos).insert(entry);
-    Future updateTodo(TodosCompanion entry) => update(todos).replace(entry);
-    Future deleteTodo(todo) => delete(todos).delete(todo);
 }   
 
 LazyDatabase _openConnection() {
