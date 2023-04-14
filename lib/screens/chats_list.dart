@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import '../components/home/chats_entry.dart';
 import '../components/home/drawer/index.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title}) : super(key: key);
+class ChatsList extends StatefulWidget {
+  ChatsList({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _ChatsListState createState() => _ChatsListState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ChatsListState extends State<ChatsList> {
   bool showOtherUsers = false;
   int selectedUser = 0;
 
@@ -72,3 +72,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+

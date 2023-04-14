@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:nostrim/utils/color.dart';
 
-class UserMessage extends StatelessWidget {
-  const UserMessage({
+class ChatsEntry extends StatelessWidget {
+  const ChatsEntry({
     Key? key,
     required this.name,
     required this.picture,

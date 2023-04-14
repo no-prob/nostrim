@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:nostrim/components/home/drawer/DrawerListTile.dart';
-import 'package:nostrim/components/home/drawer/DrawerUserListTile.dart';
+import 'drawer_list_tile.dart';
+import 'drawer_user_list_tile.dart';
 
 class DrawerScreen extends StatefulWidget {
   DrawerScreen({Key? key}) : super(key: key);
