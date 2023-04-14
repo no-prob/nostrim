@@ -48,7 +48,10 @@ class _ChatsListState extends State<ChatsList> {
       ),
       drawer: DrawerScreen(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {print('hi');},
+        onPressed: () {
+          NewEvents n = context.read<NewEvents>();
+          n.increment();
+        },
         child: Icon(Icons.edit_rounded),
       ),
     );

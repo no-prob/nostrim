@@ -1,7 +1,7 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 
-import 'package:nostrim/utils/color.dart';
+import '../../utils/color.dart';
 
 class ChatsEntry extends StatelessWidget {
   const ChatsEntry({
@@ -88,7 +88,7 @@ class ChatsEntry extends StatelessWidget {
                   ? 10
                   : badge != ""
                       ? 5
-                      : 30),
+                      : 25),
           if (badge != "")
             badges.Badge(
               badgeColor: Colors.grey.shade400,
@@ -118,8 +118,10 @@ class ChatsEntry extends StatelessWidget {
   }
 }
 
+List<Widget> myChatsEntries = [];
+
 List<Widget> getSome() {
-  return [
+  List<Widget> newEntries = [
     ChatsEntry(
       name: "Flutter Developers",
       picture: NetworkImage(
@@ -129,7 +131,7 @@ List<Widget> getSome() {
       sending: "Your",
       lastTime: "02:45",
       seeing: 2,
-      lastMessage: "https://github.com",
+      lastMessage: "https://github.com/",
     ),
     Divider(height: 0),
     ChatsEntry(
@@ -144,4 +146,7 @@ List<Widget> getSome() {
     ),
     Divider(height: 0),
   ];
+
+  myChatsEntries.addAll(newEntries);
+  return myChatsEntries;
 }
