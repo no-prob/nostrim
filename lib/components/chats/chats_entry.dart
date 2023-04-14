@@ -117,3 +117,31 @@ class ChatsEntry extends StatelessWidget {
     );
   }
 }
+
+List<Widget> getSome() {
+  return [
+    ChatsEntry(
+      name: "Flutter Developers",
+      picture: NetworkImage(
+        "https://i.ytimg.com/vi/D7h9UMADesM/maxresdefault.jpg",
+      ),
+      type: "group",
+      sending: "Your",
+      lastTime: "02:45",
+      seeing: 2,
+      lastMessage: "https://github.com",
+    ),
+    Divider(height: 0),
+    ChatsEntry(
+      name: "Flutter Türkiye 🇹🇷",
+      picture: NetworkImage(
+        "https://i.ytimg.com/vi/D7h9UMADesM/maxresdefault.jpg",
+      ),
+      lastTime: "02:16",
+      type: "group",
+      sending: "Mesud",
+      lastMessage: "gece gece sinirim bozuldu.",
+    ),
+    Divider(height: 0),
+  ];
+}

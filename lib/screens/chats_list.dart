@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../components/events.dart';
 import '../components/chats/chats_entry.dart';
 import '../components/drawer/index.dart';
 
@@ -36,32 +38,12 @@ class _ChatsListState extends State<ChatsList> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ChatsEntry(
-              name: "Flutter Developers",
-              picture: NetworkImage(
-                "https://i.ytimg.com/vi/D7h9UMADesM/maxresdefault.jpg",
-              ),
-              type: "group",
-              sending: "Your",
-              lastTime: "02:45",
-              seeing: 2,
-              lastMessage: "https://github.com",
-            ),
-            Divider(height: 0),
-            ChatsEntry(
-              name: "Flutter Türkiye 🇹🇷",
-              picture: NetworkImage(
-                "https://i.ytimg.com/vi/D7h9UMADesM/maxresdefault.jpg",
-              ),
-              lastTime: "02:16",
-              type: "group",
-              sending: "Mesud",
-              lastMessage: "gece gece sinirim bozuldu.",
-            ),
-            Divider(height: 0),
-          ],
+        child: Consumer<NewEvents>(
+          builder: (context, NewEvents e, child) {
+            return Column(
+              children: getSome(),
+            );
+          }
         ),
       ),
       drawer: DrawerScreen(),
