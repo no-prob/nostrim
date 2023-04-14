@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
       ),
       drawer: DrawerScreen(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {print('hi');},
         child: Icon(Icons.edit_rounded),
       ),
     );

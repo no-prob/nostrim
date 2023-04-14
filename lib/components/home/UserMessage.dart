@@ -38,9 +38,9 @@ class UserMessage extends StatelessWidget {
     return ListTile(
       title: Row(
         children: [
-          Text(this.name),
-          if (this.mute) SizedBox(width: 5),
-          if (this.mute)
+          Text(name),
+          if (mute) SizedBox(width: 5),
+          if (mute)
             Icon(
               Icons.volume_off_rounded,
               color: Colors.grey.shade400,
@@ -48,16 +48,16 @@ class UserMessage extends StatelessWidget {
             ),
         ],
       ),
-      subtitle: this.type == "user"
-          ? Text(this.lastMessage ?? "")
+      subtitle: type == "user"
+          ? Text(lastMessage ?? "")
           : Row(
               children: [
                 Text(
-                  "${this.sending}: ",
+                  "${sending}: ",
                   style: TextStyle(color: PacificBlue),
                 ),
                 Text(
-                  this.lastMessage ?? "",
+                  lastMessage ?? "",
                 ),
               ],
             ),
@@ -68,28 +68,28 @@ class UserMessage extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (this.seeing == 1 || this.seeing == 2)
+              if (seeing == 1 || seeing == 2)
                 Icon(
-                  this.seeing == 2
+                  seeing == 2
                       ? Icons.done_all_rounded
                       : Icons.done_rounded,
                   color: Colors.green,
                   size: 20,
                 ),
-              if (this.seeing == 1 || this.seeing == 2) SizedBox(width: 10),
+              if (seeing == 1 || seeing == 2) SizedBox(width: 10),
               Text(
-                this.lastTime,
+                lastTime,
                 style: TextStyle(color: Colors.grey.shade500),
               ),
             ],
           ),
           SizedBox(
-              height: this.pinned && this.badge == ""
+              height: pinned && badge == ""
                   ? 10
-                  : this.badge != ""
+                  : badge != ""
                       ? 5
                       : 30),
-          if (this.badge != "")
+          if (badge != "")
             badges.Badge(
               badgeColor: Colors.grey.shade400,
               position: badges.BadgePosition(bottom: -3, end: 0),
@@ -102,14 +102,14 @@ class UserMessage extends StatelessWidget {
                 ),
               ),
             ),
-          if (this.pinned && this.badge == "")
+          if (pinned && badge == "")
             Icon(Icons.push_pin_rounded, size: 20, color: Colors.grey.shade500)
         ],
       ),
       leading: SizedBox.fromSize(
         size: Size(50, 50),
         child: CircleAvatar(
-          backgroundImage: this.picture,
+          backgroundImage: picture,
           backgroundColor: Colors.grey,
         ),
       ),
