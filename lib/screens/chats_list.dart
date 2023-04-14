@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../components/home/chats_entry.dart';
-import '../components/home/drawer/index.dart';
+import '../components/chats/chats_entry.dart';
+import '../components/drawer/index.dart';
 
 class ChatsList extends StatefulWidget {
   ChatsList({Key? key, required this.title}) : super(key: key);
