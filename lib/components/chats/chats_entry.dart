@@ -2,7 +2,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../utils/color.dart';
+import '../../constants/color.dart';
 
 class ChatsEntry extends StatelessWidget {
   const ChatsEntry({

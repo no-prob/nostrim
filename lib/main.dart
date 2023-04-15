@@ -10,7 +10,7 @@ import 'screens/chats_list.dart';
 import 'screens/chat.dart';
 import 'screens/channels_list.dart';
 import 'screens/channel.dart';
-import 'utils/color.dart';
+import 'constants/color.dart';
 import 'src/db/db.dart';
 
 Future<void> main() async {
