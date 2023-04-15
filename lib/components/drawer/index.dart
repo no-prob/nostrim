@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'drawer_list_tile.dart';
 import 'drawer_user_list_tile.dart';
@@ -77,12 +78,12 @@ class DrawerScreenState extends State<DrawerScreen> {
           DrawerListTile(
             title: "Messages",
             icon: Icons.person_outline_rounded,
-            onTap: () {print('messages');},
+            onTap: () {context.go('/chats');},
           ),
           DrawerListTile(
             title: "Channels",
             icon: Icons.people_outline_rounded,
-            onTap: () {},
+            onTap: () {context.go('/channels');},
           ),
           DrawerListTile(
             title: "Bookmarks",

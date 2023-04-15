@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../utils/color.dart';
 
-class ChatsEntry extends StatelessWidget {
-  const ChatsEntry({
+class ChannelsEntry extends StatelessWidget {
+  const ChannelsEntry({
     Key? key,
     required this.name,
     required this.picture,
@@ -115,7 +115,7 @@ class ChatsEntry extends StatelessWidget {
         ),
       ),
       onTap: () {
-        context.pushNamed('chat', params: {'npub': 'npub...'});
+        context.pushNamed('channel', params: {'npub': 'npub...'});
       },
     );
   }
@@ -125,8 +125,8 @@ List<Widget> myChatsEntries = [];
 
 List<Widget> getSome() {
   List<Widget> newEntries = [
-    ChatsEntry(
-      name: "John Jacob",
+    ChannelsEntry(
+      name: "Flutter Developers",
       picture: NetworkImage(
         "https://i.ytimg.com/vi/D7h9UMADesM/maxresdefault.jpg",
       ),
@@ -137,8 +137,8 @@ List<Widget> getSome() {
       lastMessage: "https://github.com/",
     ),
     Divider(height: 0),
-    ChatsEntry(
-      name: "Jinkle Hiemer",
+    ChannelsEntry(
+      name: "Flutter Türkiye 🇹🇷",
       picture: NetworkImage(
         "https://i.ytimg.com/vi/D7h9UMADesM/maxresdefault.jpg",
       ),
@@ -153,3 +153,4 @@ List<Widget> getSome() {
   myChatsEntries.addAll(newEntries);
   return myChatsEntries;
 }
+

@@ -5,15 +5,18 @@ import '../models/events.dart';
 import '../components/channels/channels_entry.dart';
 import '../components/drawer/index.dart';
 
-class ChannelsList extends StatefulWidget {
-  const ChannelsList({Key? key, this.title='Channels'}) : super(key: key);
+class Channel extends StatefulWidget {
+  const Channel({Key? key, this.npub, this.title='Specific Channel'}) : super(key: key);
   final String title;
+  final String? npub;
 
   @override
-  _ChannelsListState createState() => _ChannelsListState();
+  _ChannelState createState() => _ChannelState();
 }
 
-class _ChannelsListState extends State<ChannelsList> {
+class _ChannelState extends State<Channel> {
+  bool showOtherUsers = false;
+  int selectedUser = 0;
 
   @override
   Widget build(BuildContext context) {

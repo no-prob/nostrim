@@ -6,7 +6,7 @@ import '../components/chats/chats_entry.dart';
 import '../components/drawer/index.dart';
 
 class ChatsList extends StatefulWidget {
-  ChatsList({Key? key, required this.title}) : super(key: key);
+  const ChatsList({Key? key, this.title='Messages'}) : super(key: key);
   final String title;
 
   @override

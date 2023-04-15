@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/events.dart';
-import '../components/channels/channels_entry.dart';
+import '../components/chats/chats_entry.dart';
 import '../components/drawer/index.dart';
 
-class ChannelsList extends StatefulWidget {
-  const ChannelsList({Key? key, this.title='Channels'}) : super(key: key);
+class Chat extends StatefulWidget {
+  const Chat({Key? key, required this.npub, this.title='Messages with specific peer'}) : super(key: key);
   final String title;
+  final String? npub;
 
   @override
-  _ChannelsListState createState() => _ChannelsListState();
+  _ChatState createState() => _ChatState();
 }
 
-class _ChannelsListState extends State<ChannelsList> {
+class _ChatState extends State<Chat> {
+  bool showOtherUsers = false;
+  int selectedUser = 0;
 
   @override
   Widget build(BuildContext context) {
