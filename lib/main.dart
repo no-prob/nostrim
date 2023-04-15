@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_size/window_size.dart';
 
-import 'components/events.dart';
+import 'models/events.dart';
 import 'screens/chats_list.dart';
 import 'utils/color.dart';
 import 'src/db/db.dart';

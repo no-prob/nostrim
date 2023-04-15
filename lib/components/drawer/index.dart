@@ -21,7 +21,7 @@ class DrawerScreenState extends State<DrawerScreen> {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text("ofarukbicer"),
-            accountEmail: Text("+90 (555) 555 55 55"),
+            accountEmail: Text("npub..."),
             onDetailsPressed: () {
               setState(() {
                 showOtherUsers = showOtherUsers ? false : true;
@@ -69,28 +69,23 @@ class DrawerScreenState extends State<DrawerScreen> {
             ),
           if (showOtherUsers)
             DrawerUserListTile(
-              name: "Yeni Kullanıcı ekle",
+              name: "New User Identity",
               icon: Icons.person_add_outlined,
               onTap: () {},
             ),
           if (showOtherUsers) Divider(),
           DrawerListTile(
-            title: "New Group",
+            title: "Messages",
+            icon: Icons.person_outline_rounded,
+            onTap: () {print('messages');},
+          ),
+          DrawerListTile(
+            title: "Channels",
             icon: Icons.people_outline_rounded,
             onTap: () {},
           ),
           DrawerListTile(
-            title: "Contacts",
-            icon: Icons.person_outline_rounded,
-            onTap: () {},
-          ),
-          DrawerListTile(
-            title: "Calls",
-            icon: Icons.phone_outlined,
-            onTap: () {},
-          ),
-          DrawerListTile(
-            title: "Saved Messages",
+            title: "Bookmarks",
             icon: Icons.bookmark_border_rounded,
             onTap: () {},
           ),

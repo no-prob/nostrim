@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/events.dart';
+import '../components/events.dart';
 import '../components/chats/chats_entry.dart';
 import '../components/drawer/index.dart';
 
-class ChatsList extends StatefulWidget {
-  ChatsList({Key? key, required this.title}) : super(key: key);
+class ChannelsList extends StatefulWidget {
+  ChannelsList({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  _ChatsListState createState() => _ChatsListState();
+  _ChannelsListState createState() => _ChannelsListState();
 }
 
-class _ChatsListState extends State<ChatsList> {
-  bool showOtherUsers = false;
-  int selectedUser = 0;
+class _ChannelsListState extends State<ChannelsList> {
 
   @override
   Widget build(BuildContext context) {
