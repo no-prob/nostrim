@@ -30,8 +30,7 @@ class _ChannelState extends State<Channel> {
                 //Implement logout functionality
               }),
         ],
-        title: Text('⚡️Channel'),
-        backgroundColor: Colors.lightBlueAccent,
+        title: Text(widget.title),
       ),
       body: SafeArea(
         child: Column(
@@ -46,14 +45,14 @@ class _ChannelState extends State<Channel> {
                   Expanded(
                     child: TextField(
                       onChanged: (value) {
-                        //Do something with the user input.
+                        //TODO: Do something with the user input.
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   TextButton(
                     onPressed: () {
-                      //Implement send functionality.
+                      // TODO: Implement send functionality.
                     },
                     child: Text(
                       'Send',

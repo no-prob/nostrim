@@ -29,8 +29,7 @@ class _ChatState extends State<Chat> {
                 //Implement logout functionality
               }),
         ],
-        title: Text('⚡️Chat'),
-        backgroundColor: Colors.lightBlueAccent,
+        title: Text(widget.title),
       ),
       body: SafeArea(
         child: Column(
