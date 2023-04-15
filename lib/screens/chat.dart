@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/events.dart';
+import '../models/message_entry.dart';
 import '../components/chats/chats_entry.dart';
 import '../components/drawer/index.dart';
 import '../constants/messages.dart';
@@ -21,49 +22,121 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: null,
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                //Implement logout functionality
-              }),
-        ],
-        title: Text(widget.title),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        //backgroundColor: Colors.white,
+        flexibleSpace: SafeArea(
+          child: Container(
+            padding: EdgeInsets.only(right: 16),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.arrow_back,color: Colors.black,),
+                ),
+                SizedBox(width: 2,),
+                CircleAvatar(
+                  backgroundImage: NetworkImage("<https://randomuser.me/api/portraits/men/5.jpg>"),
+                  maxRadius: 20,
+                ),
+                SizedBox(width: 12,),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("Kriss Benwat",style: TextStyle( fontSize: 16 ,fontWeight: FontWeight.w600),),
+                      SizedBox(height: 6,),
+                      Text("Online",style: TextStyle(color: Colors.grey.shade600, fontSize: 13),),
+                    ],
+                  ),
+                ),
+                Icon(Icons.settings,color: Colors.black54,),
+              ],
+            ),
+          ),
+        ),
       ),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Container(
-              decoration: kMessageContainerDecoration,
+      body: Stack(
+        children: <Widget>[
+          ListView.builder(
+            itemCount: messages.length,
+            shrinkWrap: true,
+            padding: EdgeInsets.only(top: 10,bottom: 10),
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index){
+              return Container(
+                padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
+                child: Align(
+                  alignment: (messages[index].messageType == "receiver"?Alignment.topLeft:Alignment.topRight),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: (messages[index].messageType  == "receiver"?Colors.grey.shade200:Colors.blue[200]),
+                    ),
+                    padding: EdgeInsets.all(16),
+                    child: Text(messages[index].messageContent, style: TextStyle(fontSize: 15),),
+                  ),
+                ),
+              );
+            },
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              padding: EdgeInsets.only(left: 10,bottom: 10,top: 10),
+              height: 60,
+              width: double.infinity,
+              color: Colors.white,
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  GestureDetector(
+                    onTap: (){
+                    },
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                        color: Colors.lightBlue,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Icon(Icons.add, color: Colors.white, size: 20, ),
+                    ),
+                  ),
+                  SizedBox(width: 15,),
                   Expanded(
                     child: TextField(
-                      onChanged: (value) {
-                        //Do something with the user input.
-                      },
-                      decoration: kMessageTextFieldDecoration,
+                      decoration: InputDecoration(
+                        hintText: "Write message...",
+                        hintStyle: TextStyle(color: Colors.black54),
+                        border: InputBorder.none
+                      ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      //Implement send functionality.
-                    },
-                    child: Text(
-                      'Send',
-                      style: kSendButtonTextStyle,
-                    ),
+                  SizedBox(width: 15,),
+                  FloatingActionButton(
+                    onPressed: (){},
+                    child: Icon(Icons.send,color: Colors.white,size: 18,),
+                    backgroundColor: Colors.blue,
+                    elevation: 0,
                   ),
                 ],
+                
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+
+List<MessageEntry> messages = [
+    MessageEntry(messageContent: "Hello, Will", messageType: "receiver"),
+    MessageEntry(messageContent: "How have you been?", messageType: "receiver"),
+    MessageEntry(messageContent: "Hey Kriss, I am doing fine dude. wbu?", messageType: "sender"),
+    MessageEntry(messageContent: "ehhhh, doing OK.", messageType: "receiver"),
+    MessageEntry(messageContent: "Is there any thing wrong?", messageType: "sender"),
+  ];
