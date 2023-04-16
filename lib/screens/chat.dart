@@ -24,7 +24,7 @@ class _ChatState extends State<Chat> {
       appBar: AppBar(
         elevation: 0,
         automaticallyImplyLeading: false,
-        //backgroundColor: Colors.white,
+        //backgroundColor: Colors.white, // white for light mode
         flexibleSpace: SafeArea(
           child: Container(
             padding: EdgeInsets.only(right: 16),
@@ -38,7 +38,7 @@ class _ChatState extends State<Chat> {
                 ),
                 SizedBox(width: 2,),
                 CircleAvatar(
-                  backgroundImage: NetworkImage("<https://randomuser.me/api/portraits/men/5.jpg>"),
+                  backgroundImage: NetworkImage("https://randomuser.me/api/portraits/men/5.jpg"),
                   maxRadius: 20,
                 ),
                 SizedBox(width: 12,),
@@ -74,7 +74,7 @@ class _ChatState extends State<Chat> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: (messages[index].messageType  == "receiver"?Colors.grey.shade200:Colors.blue[200]),
+                      color: (messages[index].messageType  == "receiver"?Colors.grey.shade400:Colors.blue[400]),
                     ),
                     padding: EdgeInsets.all(16),
                     child: Text(messages[index].messageContent, style: TextStyle(fontSize: 15),),
@@ -89,7 +89,7 @@ class _ChatState extends State<Chat> {
               padding: EdgeInsets.only(left: 10,bottom: 10,top: 10),
               height: 60,
               width: double.infinity,
-              color: Colors.white,
+              //color: Colors.white, // white for light mode
               child: Row(
                 children: <Widget>[
                   GestureDetector(
@@ -137,6 +137,6 @@ List<MessageEntry> messages = [
     MessageEntry(messageContent: "Hello, Will", messageType: "receiver"),
     MessageEntry(messageContent: "How have you been?", messageType: "receiver"),
     MessageEntry(messageContent: "Hey Kriss, I am doing fine dude. wbu?", messageType: "sender"),
-    MessageEntry(messageContent: "ehhhh, doing OK.", messageType: "receiver"),
-    MessageEntry(messageContent: "Is there any thing wrong?", messageType: "sender"),
+    MessageEntry(messageContent: "ehhhh, doing FANTASTIC.", messageType: "receiver"),
+    MessageEntry(messageContent: "Good to hear, broskie.", messageType: "sender"),
   ];
