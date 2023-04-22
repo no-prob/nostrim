@@ -10,6 +10,8 @@ import 'screens/chats_list.dart';
 import 'screens/chat.dart';
 import 'screens/channels_list.dart';
 import 'screens/channel.dart';
+import 'screens/contacts_list.dart';
+import 'screens/contact.dart';
 import 'constants/color.dart';
 import 'src/db/db.dart';
 
@@ -66,6 +68,19 @@ GoRouter router() {
             path: 'channel/:npub', // look up nip28 channels
             name: 'channel',
             builder: (context, state) => Channel(
+              npub: state.params['npub'],
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/contacts',
+        builder: (context, state) => const ContactsList(),
+        routes: [
+          GoRoute(
+            path: 'contact/:npub', // look up nip28 channels
+            name: 'contact',
+            builder: (context, state) => Contact(
               npub: state.params['npub'],
             ),
           ),

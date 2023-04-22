@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../constants/color.dart';
 
-class ChatsEntry extends StatelessWidget {
-  const ChatsEntry({
+class ContactsEntry extends StatelessWidget {
+  const ContactsEntry({
     Key? key,
     required this.name,
     required this.picture,

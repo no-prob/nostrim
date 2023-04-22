@@ -36,7 +36,7 @@ class Relay {
   Relay(this.name, this.url, [filters]) {
     this.filters = this.filters + (filters ?? []);
     socketMap[name] = socketConnect(url);
-    listen();
+    //listen();
     subscribe();
   }
 
@@ -88,15 +88,17 @@ class Relay {
     }
   }
     
-  void listen() {
+  void listen([void Function(dynamic)? func]) {
+    func ??= (data) {
+      if (data == null || data == 'null') {
+        return;
+      }
+      // TODO: deserialize, insert in db, then add to UI components stream
+      debugCode(data);
+    };
+
     socket.stream.listen(
-      (data) {
-        if (data == null || data == 'null') {
-          return;
-        }
-        // TODO: deserialize, insert in db, then add to UI components stream
-        debugCode(data);
-      },
+      func,
       onError: (err) {
         print("Error in creating connection to $url.");
       },
@@ -153,6 +155,12 @@ class Relays {
   send(String request) {
     relays?.forEach((relay) {
       relay.send(request);
+    });
+  }
+
+  void listen(dynamic func) {
+    relays?.forEach((relay) {
+      relay.listen(func);
     });
   }
 }

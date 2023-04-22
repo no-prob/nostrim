@@ -20,9 +20,10 @@ class DrawerScreenState extends State<DrawerScreen> {
     return Drawer(
       child: ListView(
         children: [
+          // These are not "accounts" ...
           UserAccountsDrawerHeader(
             accountName: Text("ofarukbicer"),
-            accountEmail: Text("npub..."),
+            accountEmail: Text("npub..."), // Not an email address!!
             onDetailsPressed: () {
               setState(() {
                 showOtherUsers = showOtherUsers ? false : true;
@@ -89,6 +90,11 @@ class DrawerScreenState extends State<DrawerScreen> {
             title: "Bookmarks",
             icon: Icons.bookmark_border_rounded,
             onTap: () {},
+          ),
+          DrawerListTile(
+            title: "Contacts", // This will be a separate app in the future!
+            icon: Icons.contacts_rounded,
+            onTap: () {context.go('/contacts');},
           ),
           DrawerListTile(
             title: "Settings",

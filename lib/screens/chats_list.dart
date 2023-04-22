@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:nostr/nostr.dart';
 
 import '../models/events.dart';
 import '../components/chats/chats_entry.dart';
@@ -14,6 +16,39 @@ class ChatsList extends StatefulWidget {
   _ChatsListState createState() => _ChatsListState();
 }
 
+List<Widget> myChatsEntries = [];
+
+List<Widget> getSome() {
+  List<Widget> newEntries = [
+    ChatsEntry(
+      name: "John Jacob",
+      picture: NetworkImage(
+        "https://i.ytimg.com/vi/D7h9UMADesM/maxresdefault.jpg",
+      ),
+      type: "group",
+      sending: "Your",
+      lastTime: "02:45",
+      seeing: 2,
+      lastMessage: "https://github.com/",
+    ),
+    Divider(height: 0),
+    ChatsEntry(
+      name: "Jinkle Hiemer",
+      picture: NetworkImage(
+        "https://i.ytimg.com/vi/D7h9UMADesM/maxresdefault.jpg",
+      ),
+      lastTime: "02:16",
+      type: "group",
+      sending: "Mesud",
+      lastMessage: "gece gece sinirim bozuldu.",
+    ),
+    Divider(height: 0),
+  ];
+
+  myChatsEntries.addAll(newEntries);
+  return myChatsEntries;
+}
+
 class _ChatsListState extends State<ChatsList> {
   List<String> npubs = [];
   bool showOtherUsers = false;
@@ -24,6 +59,43 @@ class _ChatsListState extends State<ChatsList> {
   void initState() {
     super.initState();
     relays = getRelays();
+  }
+
+  final bool _running = true;
+
+  Stream<String> _event() async* {
+    while (_running) {
+      relays.listen(
+        (data) {
+          if (data == null || data == 'null') {
+            return;
+          }
+          Message m = Message.deserialize(data);
+          print(data);
+          if ([m.type,].contains("EVENT")) {
+            Event event = m.message;
+            String content = event.content;
+            if (event.kind == 4) {
+              String senderPubkey = "";
+              event.tags.forEach((tag) {
+                if (tag[0] == 'p') {
+                  if (tag[1] != getKey('bob', 'pub')) {
+                    print('@@@@@@@@@@@@@@@@ Not sure who this DM is to: ${tag[1]}');
+                  }
+                  senderPubkey = tag[1];
+                }
+              });
+              content = (event as EncryptedDirectMessage).getPlaintext(getKey('bob', 'priv'));
+            }
+            print("");
+            print("######## EVENT #########");
+            print(data);
+            print("kind[${event.kind}], isValid[${event.isValid()}]");
+            print("content=${content}");
+          }
+        },
+      );
+    }
   }
 
   @override
@@ -47,8 +119,9 @@ class _ChatsListState extends State<ChatsList> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Consumer<NewEvents>(
-          builder: (context, NewEvents e, child) {
+        child: StreamBuilder(
+          stream: _event(),
+          builder: (context, AsyncSnapshot<String> snapshot) {
             return Column(
               children: getSome(),
             );
