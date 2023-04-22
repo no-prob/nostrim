@@ -10,7 +10,15 @@ import 'models.dart';
 part 'db.g.dart';
 
 
-@DriftDatabase(tables: [Users, Events])
+class User {
+  final Contact contact;
+  final List<Npub> npubs;
+
+  User(this.contact, this.npubs);
+}
+
+
+@DriftDatabase(tables: [Contacts, Npubs, Events])
 class AppDatabase extends _$AppDatabase {
     AppDatabase() : super(_openConnection());
 

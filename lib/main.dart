@@ -13,7 +13,7 @@ import 'screens/channel.dart';
 import 'screens/contacts_list.dart';
 import 'screens/contact.dart';
 import 'constants/color.dart';
-import 'src/db/db.dart';
+import 'src/db/db.dart' as db;
 
 Future<void> main() async {
   runApp(
@@ -78,7 +78,7 @@ GoRouter router() {
         builder: (context, state) => const ContactsList(),
         routes: [
           GoRoute(
-            path: 'contact/:npub', // look up nip28 channels
+            path: 'contact/:npub',
             name: 'contact',
             builder: (context, state) => Contact(
               npub: state.params['npub'],
