@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/events.dart';
 import '../components/chats/chats_entry.dart';
 import '../components/drawer/index.dart';
+import '../src/relays.dart';
 
 class ChatsList extends StatefulWidget {
   const ChatsList({Key? key, this.title='Messages'}) : super(key: key);
@@ -14,8 +15,16 @@ class ChatsList extends StatefulWidget {
 }
 
 class _ChatsListState extends State<ChatsList> {
+  List<String> npubs = [];
   bool showOtherUsers = false;
   int selectedUser = 0;
+  late Relays relays;
+
+  @override
+  void initState() {
+    super.initState();
+    relays = getRelays();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,5 +65,14 @@ class _ChatsListState extends State<ChatsList> {
       ),
     );
   }
-}
 
+  void eventArrives(String npub) {
+    // This has to be called whenever we get signaled by stream
+    if (npubs.contains(npub)) {
+      // Put the blue dot indicating a new message arrived
+    } else {
+      // should go at the top of the displayed list
+      npubs.add(npub);
+    }
+  }
+}
