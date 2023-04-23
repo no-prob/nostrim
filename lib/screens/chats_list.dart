@@ -50,51 +50,18 @@ List<Widget> getSome() {
 }
 
 class _ChatsListState extends State<ChatsList> {
-  List<String> npubs = [];
   bool showOtherUsers = false;
   int selectedUser = 0;
-  late Relays relays;
 
   @override
   void initState() {
     super.initState();
-    relays = getRelays();
   }
 
   final bool _running = true;
 
   Stream<String> _event() async* {
-    while (_running) {
-      relays.listen(
-        (data) {
-          if (data == null || data == 'null') {
-            return;
-          }
-          Message m = Message.deserialize(data);
-          print(data);
-          if ([m.type,].contains("EVENT")) {
-            Event event = m.message;
-            String content = event.content;
-            if (event.kind == 4) {
-              String senderPubkey = "";
-              event.tags.forEach((tag) {
-                if (tag[0] == 'p') {
-                  if (tag[1] != getKey('bob', 'pub')) {
-                    print('@@@@@@@@@@@@@@@@ Not sure who this DM is to: ${tag[1]}');
-                  }
-                  senderPubkey = tag[1];
-                }
-              });
-              content = (event as EncryptedDirectMessage).getPlaintext(getKey('bob', 'priv'));
-            }
-            print("");
-            print("######## EVENT #########");
-            print(data);
-            print("kind[${event.kind}], isValid[${event.isValid()}]");
-            print("content=${content}");
-          }
-        },
-      );
+    while (!_running) {
     }
   }
 
@@ -120,7 +87,7 @@ class _ChatsListState extends State<ChatsList> {
       ),
       body: SingleChildScrollView(
         child: StreamBuilder(
-          stream: _event(),
+          //stream: _event(),
           builder: (context, AsyncSnapshot<String> snapshot) {
             return Column(
               children: getSome(),
@@ -137,15 +104,5 @@ class _ChatsListState extends State<ChatsList> {
         child: Icon(Icons.edit_rounded),
       ),
     );
-  }
-
-  void eventArrives(String npub) {
-    // This has to be called whenever we get signaled by stream
-    if (npubs.contains(npub)) {
-      // Put the blue dot indicating a new message arrived
-    } else {
-      // should go at the top of the displayed list
-      npubs.add(npub);
-    }
   }
 }

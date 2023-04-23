@@ -37,6 +37,5 @@ class Events extends Table {
         .check(createdAt.isBiggerThan(Constant(DateTime(1950))))
               .withDefault(currentDateAndTime)();
   IntColumn get kind => integer()();
-  TextColumn get sig => text().withLength(min: 0, max: 128)();
   TextColumn get raw => text().withLength(min: 0, max: 2048)();
 }

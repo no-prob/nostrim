@@ -14,8 +14,12 @@ import 'screens/contacts_list.dart';
 import 'screens/contact.dart';
 import 'constants/color.dart';
 import 'src/db/db.dart' as db;
+import 'src/db/sink.dart';
+
 
 Future<void> main() async {
+  EventSink sink = EventSink();
+  sink.listen();
   runApp(
     ChangeNotifierProvider(
       create: (context) => NewEvents(),

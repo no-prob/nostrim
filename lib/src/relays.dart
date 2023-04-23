@@ -165,15 +165,3 @@ class Relays {
   }
 }
 
-Relays? relays;
-
-Relays getRelays() {
-  if (relays != null) {
-    return relays!;
-  }
-  relays = Relays();
-  relaySettings.forEach((name, url) {
-    relays?.add(name, url);
-  });
-  return relays!;
-}
