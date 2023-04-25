@@ -31,11 +31,13 @@ class Contacts extends Table {
 class Events extends Table {
   /// All events table
   IntColumn get columnId => integer().autoIncrement()();
-  TextColumn get id => text().withLength(min: 0, max: 64)();
+  TextColumn get id => text().unique().withLength(min: 0, max: 64)();
   TextColumn get pubkey => text().withLength(min: 64, max: 64)();
-  DateTimeColumn get createdAt => dateTime()
-        .check(createdAt.isBiggerThan(Constant(DateTime(1950))))
-              .withDefault(currentDateAndTime)();
+  TextColumn get content => text().withLength(min: 0, max: 1024)();
+  TextColumn get plaintext => text().withLength(min: 0, max: 1024)();
+  DateTimeColumn get createdAt => dateTime()();
   IntColumn get kind => integer()();
-  TextColumn get raw => text().withLength(min: 0, max: 2048)();
+  TextColumn get sig => text().withLength(min: 0, max: 256)();
+  BoolColumn get decryptError => boolean()();
+  // TODO: TAGS
 }
