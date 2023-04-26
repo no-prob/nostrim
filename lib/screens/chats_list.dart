@@ -7,6 +7,7 @@ import '../models/events.dart';
 import '../components/chats/chats_entry.dart';
 import '../components/drawer/index.dart';
 import '../src/relays.dart';
+import '../src/db/crud.dart';
 
 class ChatsList extends StatefulWidget {
   const ChatsList({Key? key, this.title='Messages'}) : super(key: key);
@@ -87,12 +88,19 @@ class _ChatsListState extends State<ChatsList> {
       ),
       body: SingleChildScrollView(
         child: StreamBuilder(
-          //stream: _event(),
+          //stream: watchEvents(),
+          /*
+          initialData: () {
+            return Column(
+              children: getSome(),
+            );
+          },
+          */
           builder: (context, AsyncSnapshot<String> snapshot) {
             return Column(
               children: getSome(),
             );
-          }
+          },
         ),
       ),
       drawer: DrawerScreen(),

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:nostr/nostr.dart';
 
 import '../models/events.dart';
 import '../models/message_entry.dart';
 import '../components/chats/chats_entry.dart';
 import '../components/drawer/index.dart';
 import '../constants/messages.dart';
+import '../src/db/crud.dart';
+import '../../config/settings.dart';
 
 class Chat extends StatefulWidget {
   const Chat({Key? key, required this.npub, this.title='Messages with specific peer'}) : super(key: key);
@@ -17,6 +20,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
+  int lastSeen = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -61,27 +65,37 @@ class _ChatState extends State<Chat> {
       ),
       body: Stack(
         children: <Widget>[
-          ListView.builder(
-            itemCount: messages.length,
-            shrinkWrap: true,
-            padding: EdgeInsets.only(top: 10,bottom: 10),
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index){
-              return Container(
-                padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
-                child: Align(
-                  alignment: (messages[index].messageType == "receiver"?Alignment.topLeft:Alignment.topRight),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: (messages[index].messageType  == "receiver"?Colors.grey.shade400:Colors.blue[400]),
-                    ),
-                    padding: EdgeInsets.all(16),
-                    child: Text(messages[index].messageContent, style: TextStyle(fontSize: 15),),
-                  ),
-                ),
-              );
-            },
+          StreamBuilder(
+            stream: watchEvents(),
+            builder: (context, AsyncSnapshot<List<Event>> snapshot) {
+              if (snapshot.hasData) {
+                addMessages(snapshot.data!);
+
+                return ListView.builder(
+                  itemCount: messages.length,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(top: 10,bottom: 10),
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
+                      child: Align(
+                        alignment: (messages[index].messageType == "receiver"?Alignment.topLeft:Alignment.topRight),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: (messages[index].messageType  == "receiver"?Colors.grey.shade400:Colors.blue[400]),
+                          ),
+                          padding: EdgeInsets.all(16),
+                          child: Text(messages[index].messageContent, style: TextStyle(fontSize: 15),),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+              return const LinearProgressIndicator();
+            }
           ),
           Align(
             alignment: Alignment.bottomLeft,
@@ -130,6 +144,24 @@ class _ChatState extends State<Chat> {
         ],
       ),
     );
+  }
+
+  void addMessages(List<Event> entries) {
+    for (final event in entries) {
+      if (event.createdAt > lastSeen) {
+        lastSeen = event.createdAt;
+      }
+      try {
+        messages.add(MessageEntry(
+            messageContent: (event as EncryptedDirectMessage)
+              .getPlaintext(getKey('bob', 'priv')),
+            messageType: "receiver",
+          )
+        );
+      } catch (err) {
+        print("maybe decryption error: $err");
+      }
+    }
   }
 }
 

@@ -39,8 +39,8 @@ class EventSink {
           Event event = m.message;
           createEvent(event);
           //Event queriedEvent = await readEvent(event.id);
-          print("");
-          print("######## EVENT #########");
+          //print("");
+          print("######## RECEIVED EVENT #########");
           //print(data);
         }
       },

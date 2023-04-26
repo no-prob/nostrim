@@ -8,7 +8,8 @@ Future<void> createEvent(nostr.Event event) async {
   String plaintext = "";
   bool decryptError = false;
   try {
-    plaintext = (event as nostr.EncryptedDirectMessage).getPlaintext(getKey('bob', 'priv'));
+    // TODO: Consider not storing the plaintext
+    //plaintext = (event as nostr.EncryptedDirectMessage).getPlaintext(getKey('bob', 'priv'));
   } catch(err) {
     decryptError = true;
     print(err);
@@ -35,16 +36,37 @@ Future<void> createEvent(nostr.Event event) async {
   }
 }
 
-Future<nostr.Event> readEvent(String id) async {
-  Event entry = await (database.select(database.events)
+List<nostr.Event> nostrEvents(List<Event> entries) {
+  List<nostr.Event> events = [];
+  for (final entry in entries) {
+    nostr.Event event = nostr.Event.partial();
+    event.id = entry.id;
+    event.pubkey = entry.pubkey;
+    event.content = entry.content;
+    event.createdAt = entry.createdAt.millisecondsSinceEpoch;
+    event.kind = entry.kind;
+    event.sig = entry.sig;
+    if (event.kind == 4) {
+      // TODO: Need TAGS for id to pass isValid()
+      events.add(nostr.EncryptedDirectMessage(event, verify: false));
+    } else {
+      events.add(event);
+    }
+  }
+  print('returning events $events');
+  return events;
+}
+
+Future<List<nostr.Event>> readEvent(String id) async {
+  List<Event> entries = await (database.select(database.events)
         ..where((t) => t.id.equals(id)))
-      .getSingle();
-  nostr.Event event = nostr.Event.partial();
-  event.id = entry.id;
-  event.pubkey = entry.pubkey;
-  event.content = entry.content;
-  event.createdAt = entry.createdAt as int;
-  event.kind = entry.kind;
-  event.sig = entry.sig;
-  return event;
+      .get();
+  return nostrEvents(entries);
+}
+
+Stream<List<nostr.Event>> watchEvents([int from=0]) async* {
+  Stream<List<Event>> entries = await (database.select(database.events)).watch();
+  await for (final entryList in entries) {
+    yield nostrEvents(entryList);
+  }
 }
