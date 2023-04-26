@@ -63,7 +63,9 @@ class _ChatState extends State<Chat> {
           ),
         ),
       ),
+      //body: CustomMultiChildLayout(
       body: Stack(
+        //delegate: MultiChildLayoutDelegate(),
         children: <Widget>[
           StreamBuilder(
             stream: watchEvents(),
@@ -72,10 +74,10 @@ class _ChatState extends State<Chat> {
                 addMessages(snapshot.data!);
 
                 return ListView.builder(
+                  //itemExtent: 
                   itemCount: messages.length,
                   shrinkWrap: true,
-                  padding: EdgeInsets.only(top: 10,bottom: 10),
-                  physics: NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
                   itemBuilder: (context, index) {
                     return Container(
                       padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
