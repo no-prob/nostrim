@@ -99,6 +99,11 @@ Stream<List<MessageEntry>> watchMessages([DateTime? from]) async* {
   Stream<List<Event>> entries = await (
     database
       .select(database.events)
+      ..orderBy([(t) => OrderingTerm(
+           expression: t.createdAt,
+           mode: OrderingMode.desc,
+        )]
+      )
     ).watch();
   await for (final entryList in entries) {
     List<NostrEvent> events = nostrEvents(entryList);
