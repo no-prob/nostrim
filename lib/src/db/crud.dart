@@ -85,7 +85,6 @@ List<NostrEvent> nostrEvents(List<Event> entries) {
     // TODO: Need TAGS for id to pass isValid()
     events.add(NostrEvent(event, entry.plaintext!));
   }
-  //print('returning events $events');
   return events;
 }
 
@@ -96,15 +95,14 @@ Future<List<NostrEvent>> readEvent(String id) async {
   return nostrEvents(entries);
 }
 
-Stream<List<NostrEvent>> watchEvents([int from=0]) async* {
-  Stream<List<Event>> entries = await (database.select(database.events)).watch();
-  await for (final entryList in entries) {
-    yield nostrEvents(entryList);
-  }
-}
-
 Stream<List<MessageEntry>> watchMessages([DateTime? from]) async* {
-  Stream<List<Event>> entries = await (database.select(database.events)).watch();
+  Stream<List<Event>> entries = await (
+    database
+      .select(database.events)
+      ..orderBy([(t) => OrderingTerm(
+           expression: t.createdAt,
+        )]
+      )).watch();
   await for (final entryList in entries) {
     List<NostrEvent> events = nostrEvents(entryList);
     List<MessageEntry> messages = [];
