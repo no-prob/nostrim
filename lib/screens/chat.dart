@@ -35,7 +35,7 @@ class _ChatState extends State<Chat> {
             child: Row(
               children: <Widget>[
                 IconButton(
-                  onPressed: (){
+                  onPressed: () {
                     Navigator.pop(context);
                   },
                   icon: Icon(Icons.arrow_back,color: Colors.black,),
@@ -82,11 +82,11 @@ class _ChatState extends State<Chat> {
                     return Container(
                       padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
                       child: Align(
-                        alignment: (messages[index].type == "receiver"?Alignment.topLeft:Alignment.topRight),
+                        alignment: (messages[index].type == "receiver" ? Alignment.topLeft:Alignment.topRight),
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: (messages[index].type  == "receiver"?Colors.grey.shade400:Colors.blue[400]),
+                            color: (messages[index].type  == "receiver" ? Colors.grey.shade400:Colors.blue[400]),
                           ),
                           padding: EdgeInsets.all(16),
                           child: Text(messages[index].content, style: TextStyle(fontSize: 15),),
@@ -109,7 +109,7 @@ class _ChatState extends State<Chat> {
               child: Row(
                 children: <Widget>[
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                     },
                     child: Container(
                       height: 30,
@@ -133,13 +133,12 @@ class _ChatState extends State<Chat> {
                   ),
                   SizedBox(width: 15,),
                   FloatingActionButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     child: Icon(Icons.send,color: Colors.white,size: 18,),
                     backgroundColor: Colors.blue,
                     elevation: 0,
                   ),
                 ],
-                
               ),
             ),
           ),

@@ -42,7 +42,11 @@ Future<void> createEvent(nostr.Event event) async {
   updateEventPlaintext(event, plaintext, decryptError);
 }
 
-Future<void> updateEventPlaintext(nostr.Event event, String plaintext, bool decryptError) async {
+Future<void> updateEventPlaintext(
+    nostr.Event event,
+    String plaintext,
+    bool decryptError,
+  ) async {
   final insert = EventsCompanion.insert(
       id: event.id,
       pubkey: event.pubkey,
@@ -53,21 +57,17 @@ Future<void> updateEventPlaintext(nostr.Event event, String plaintext, bool decr
       plaintext: plaintext,
       decryptError: decryptError,
   );
-  final update = EventsCompanion.custom(
-      plaintext: Variable(plaintext),
-      decryptError: Variable(decryptError),
-  );
   try {
     await database
         .into(database.events)
-        .insert(insert, onConflict: DoUpdate((_) => update));
+        .insert(insert, mode: InsertMode.insertOrReplace);
   } catch(err) {
     print(err);
   }
 }
 
 class NostrEvent extends nostr.EncryptedDirectMessage {
-  late String plaintext;
+  final String plaintext;
   NostrEvent(nostr.Event event, this.plaintext): super(event, verify: false);
 }
 
