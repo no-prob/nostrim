@@ -1,9 +1,14 @@
 import '../src/contact.dart';
 
 class MessageEntry {
-  String messageContent;
-  String messageType;
-  Contact? peer;
-  DateTime? timestamp;
-  MessageEntry({required this.messageContent, required this.messageType});
+  String content;
+  String type;
+  Contact contact;
+  DateTime timestamp;
+  MessageEntry({
+    required this.content,
+    required this.type,
+    required this.contact,
+    required this.timestamp
+ });
 }

@@ -4,6 +4,7 @@ import 'package:nostr/nostr.dart' as nostr;
 import 'db.dart';
 import '../../config/settings.dart';
 import '../../models/message_entry.dart';
+import '../contact.dart' as contact;
 
 Future<void> createEvent(nostr.Event event) async {
   try {
@@ -84,7 +85,7 @@ List<NostrEvent> nostrEvents(List<Event> entries) {
     // TODO: Need TAGS for id to pass isValid()
     events.add(NostrEvent(event, entry.plaintext!));
   }
-  print('returning events $events');
+  //print('returning events $events');
   return events;
 }
 
@@ -104,16 +105,19 @@ Stream<List<NostrEvent>> watchEvents([int from=0]) async* {
 
 Stream<List<MessageEntry>> watchMessages([DateTime? from]) async* {
   Stream<List<Event>> entries = await (database.select(database.events)).watch();
-  List<MessageEntry> messages = [];
   await for (final entryList in entries) {
     List<NostrEvent> events = nostrEvents(entryList);
+    List<MessageEntry> messages = [];
     for (final event in events) {
       messages.add(MessageEntry(
-          messageContent: event.plaintext,
-          messageType: "receiver",
+          content: event.plaintext,
+          type: "receiver",
+          timestamp: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
+          contact: contact.Contact(event.pubkey),
         )
       );
     }
+    //print('yielding messages $messages');
+    yield messages;
   }
-  yield messages;
 }

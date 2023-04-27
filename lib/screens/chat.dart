@@ -20,7 +20,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  int lastSeen = 0;
+  DateTime? lastSeen;
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +68,8 @@ class _ChatState extends State<Chat> {
         //delegate: MultiChildLayoutDelegate(),
         children: <Widget>[
           StreamBuilder(
-            stream: watchEvents(),
-            builder: (context, AsyncSnapshot<List<Event>> snapshot) {
+            stream: watchMessages(),
+            builder: (context, AsyncSnapshot<List<MessageEntry>> snapshot) {
               if (snapshot.hasData) {
                 addMessages(snapshot.data!);
 
@@ -82,14 +82,14 @@ class _ChatState extends State<Chat> {
                     return Container(
                       padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
                       child: Align(
-                        alignment: (messages[index].messageType == "receiver"?Alignment.topLeft:Alignment.topRight),
+                        alignment: (messages[index].type == "receiver"?Alignment.topLeft:Alignment.topRight),
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: (messages[index].messageType  == "receiver"?Colors.grey.shade400:Colors.blue[400]),
+                            color: (messages[index].type  == "receiver"?Colors.grey.shade400:Colors.blue[400]),
                           ),
                           padding: EdgeInsets.all(16),
-                          child: Text(messages[index].messageContent, style: TextStyle(fontSize: 15),),
+                          child: Text(messages[index].content, style: TextStyle(fontSize: 15),),
                         ),
                       ),
                     );
@@ -148,29 +148,14 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  void addMessages(List<Event> entries) {
-    for (final event in entries) {
-      if (event.createdAt > lastSeen) {
-        lastSeen = event.createdAt;
+  void addMessages(List<MessageEntry> entries) {
+    for (final message in entries) {
+      if (lastSeen == null || message.timestamp.isAfter(lastSeen!)) {
+        lastSeen = message.timestamp;
       }
-      try {
-        messages.add(MessageEntry(
-            messageContent: (event as EncryptedDirectMessage)
-              .getPlaintext(getKey('bob', 'priv')),
-            messageType: "receiver",
-          )
-        );
-      } catch (err) {
-        print("maybe decryption error: $err");
-      }
+      messages.add(message);
     }
   }
 }
 
-List<MessageEntry> messages = [
-    MessageEntry(messageContent: "Hello, Will", messageType: "receiver"),
-    MessageEntry(messageContent: "How have you been?", messageType: "receiver"),
-    MessageEntry(messageContent: "Hey Kriss, I am doing fine dude. wbu?", messageType: "sender"),
-    MessageEntry(messageContent: "ehhhh, doing FANTASTIC.", messageType: "receiver"),
-    MessageEntry(messageContent: "Good to hear, broskie.", messageType: "sender"),
-  ];
+List<MessageEntry> messages = [];

@@ -1,4 +1,5 @@
 
 class Contact {
-  String? npub;
+  late String npub;
+  Contact(this.npub);
 }
