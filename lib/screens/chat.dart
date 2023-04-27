@@ -8,7 +8,8 @@ import '../components/chats/chats_entry.dart';
 import '../components/drawer/index.dart';
 import '../constants/messages.dart';
 import '../src/db/crud.dart';
-import '../../config/settings.dart';
+import '../src/relays.dart';
+import '../config/settings.dart';
 
 class Chat extends StatefulWidget {
   const Chat({Key? key, required this.npub, this.title='Messages with specific peer'}) : super(key: key);
@@ -134,8 +135,8 @@ class _ChatState extends State<Chat> {
                   ),
                   SizedBox(width: 15,),
                   FloatingActionButton(
-                    onPressed: () {},
-                    child: Icon(Icons.send,color: Colors.white,size: 18,),
+                    onPressed: sendMessage('hi'),
+                    child: Icon(Icons.send, color: Colors.white,size: 18,),
                     backgroundColor: Colors.blue,
                     elevation: 0,
                   ),
@@ -146,6 +147,16 @@ class _ChatState extends State<Chat> {
         ],
       ),
     );
+  }
+
+  sendMessage(String content) {
+    EncryptedDirectMessage event = EncryptedDirectMessage.redact(
+      getKey('alice', 'priv'),
+      getKey('bob', 'pub'),
+      content,
+    );
+    Relays relays = getRelays();
+    relays.send(event.serialize());
   }
 
   void addMessages(List<MessageEntry> entries) {
