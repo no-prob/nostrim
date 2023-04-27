@@ -150,13 +150,8 @@ class _ChatState extends State<Chat> {
   }
 
   sendMessage(String content) {
-    EncryptedDirectMessage event = EncryptedDirectMessage.redact(
-      getKey('alice', 'priv'),
-      getKey('bob', 'pub'),
-      content,
-    );
     Relays relays = getRelays();
-    relays.send(event.serialize());
+    relays.sendMessage(content);
   }
 
   void addMessages(List<MessageEntry> entries) {

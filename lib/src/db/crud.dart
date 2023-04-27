@@ -5,8 +5,9 @@ import 'db.dart';
 import '../../config/settings.dart';
 import '../../models/message_entry.dart';
 import '../contact.dart' as contact;
+import '../logging.dart';
 
-Future<void> createEvent(nostr.Event event) async {
+Future<void> createEvent(nostr.Event event, [String? plaintext]) async {
   try {
     await database.into(database.events).insert(
           EventsCompanion.insert(
@@ -30,16 +31,19 @@ Future<void> createEvent(nostr.Event event) async {
       return;
     }
   }
-  String plaintext = "";
-  bool decryptError = false;
-  try {
-    // TODO: Consider not storing the plaintext
-    plaintext = (event as nostr.EncryptedDirectMessage).getPlaintext(getKey('bob', 'priv'));
-  } catch(err) {
-    decryptError = true;
-    print(err);
+  if (plaintext == null) {
+    bool decryptError = false;
+    try {
+      // TODO: Consider not storing the plaintext
+      plaintext = (event as nostr.EncryptedDirectMessage).getPlaintext(getKey('bob', 'priv'));
+    } catch(err) {
+      decryptError = true;
+      print(err);
+    }
+    updateEventPlaintext(event, decryptError ? "" : plaintext!, decryptError);
   }
-  updateEventPlaintext(event, plaintext, decryptError);
+  plaintext ??= "<decrypt error>";
+  logEvent(event, plaintext);
 }
 
 Future<void> updateEventPlaintext(

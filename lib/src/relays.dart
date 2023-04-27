@@ -3,6 +3,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:nostr/nostr.dart';
 
 import '../config/settings.dart';
+import 'db/crud.dart';
 
 
 class Relay {
@@ -45,48 +46,11 @@ class Relay {
     socket.sink.add(requestWithFilter.serialize());
   }
 
-  // XXX JUNK DEBUG
-  void debugCode(String data) {
-    Message m = Message.deserialize(data);
-    if ([m.type,].contains("EVENT")) {
-      Event event = m.message;
-      String content = event.content;
-      if (event.kind == 4) {
-        String senderPubkey = "";
-        event.tags.forEach((tag) {
-          if (tag[0] == 'p') {
-            if (tag[1] != getKey('bob', 'pub')) {
-              print('@@@@@@@@@@@@@@@@ Not sure who this DM is to: ${tag[1]}');
-            }
-            senderPubkey = tag[1];
-          }
-        });
-        content = (event as EncryptedDirectMessage).getPlaintext(getKey('bob', 'priv'));
-      }
-      print("");
-      print("######## EVENT #########");
-      print(data);
-      print("kind[${event.kind}], isValid[${event.isValid()}]");
-      print("content=${content}");
-      //print(event.serialize());
-    }
-  }
-    
-  void listen([void Function(dynamic)? func]) {
-    func ??= (data) {
-      if (data == null || data == 'null') {
-        return;
-      }
-      // TODO: deserialize, insert in db, then add to UI components stream
-      debugCode(data);
-    };
-
+  void listen(void Function(dynamic) func) {
     socket.stream.listen(
       func,
-      onError: (err) {
-        print("Error in creating connection to $url.");
-      },
-      onDone: () { print('Relay[$name]: In onDone'); }
+      onError: (err) => print("Error in creating connection to $url."),
+      onDone: () => print('Relay[$name]: In onDone'),
     );
   }
 
@@ -101,10 +65,12 @@ class Relay {
 
   Future<void> send(String request) async {
     socket.sink.add(request);
+    // TODO: check the return OK if relay supports that NIP
   }
 
-  void sendEvent(Event event) {
-    send(event.serialize());
+  Future<void> sendEvent(Event event) async {
+    await send(event.serialize());
+    createEvent(event);
   }
 }
 
@@ -139,6 +105,21 @@ class Relays {
   send(String request) {
     relays?.forEach((relay) {
       relay.send(request);
+    });
+  }
+
+  sendMessage(String content) {
+    EncryptedDirectMessage event = EncryptedDirectMessage.redact(
+      getKey('alice', 'priv'),
+      getKey('bob', 'pub'),
+      content,
+    );
+    sendEvent(event);
+  }
+
+  sendEvent(Event event) {
+    relays?.forEach((relay) {
+      relay.sendEvent(event);
     });
   }
 
