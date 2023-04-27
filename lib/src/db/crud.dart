@@ -99,10 +99,7 @@ Stream<List<MessageEntry>> watchMessages([DateTime? from]) async* {
   Stream<List<Event>> entries = await (
     database
       .select(database.events)
-      ..orderBy([(t) => OrderingTerm(
-           expression: t.createdAt,
-        )]
-      )).watch();
+    ).watch();
   await for (final entryList in entries) {
     List<NostrEvent> events = nostrEvents(entryList);
     List<MessageEntry> messages = [];
@@ -115,7 +112,6 @@ Stream<List<MessageEntry>> watchMessages([DateTime? from]) async* {
         )
       );
     }
-    //print('yielding messages $messages');
     yield messages;
   }
 }
