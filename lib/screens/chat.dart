@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nostr/nostr.dart';
@@ -22,32 +23,47 @@ class Chat extends StatefulWidget {
 
 class _ChatState extends State<Chat> {
   int _index = 0;
-  List<MessageEntry> _messages = [];
-  final TextEditingController fieldText = TextEditingController();
+  final List<MessageEntry> _messages = [];
+  final TextEditingController _textEntryField = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    fieldText.addListener(() {
-      final String text = fieldText.text;
-      fieldText.value = fieldText.value.copyWith(
+    _textEntryField.addListener(() {
+      final String text = _textEntryField.text;
+      _textEntryField.value = _textEntryField.value.copyWith(
         text: text,
         selection:
             TextSelection(baseOffset: text.length, extentOffset: text.length),
         composing: TextRange.empty,
       );
     });
+    readMessages(0).then((messages) {
+      for (final message in messages) {
+        _messages.add(message);
+        if (message.index > _index) {
+          _index = message.index;
+        }
+      }
+    }).catchError((err) => print(err));
+    watchMessages(_index).listen((entries) {
+      for (final message in entries) {
+        _index = message.index;
+        message.content += " ${message.index}";
+        _chat.add(message);
+      }
+    });
   }
 
   @override
   void dispose() {
-    fieldText.dispose();
+    _textEntryField.dispose();
     super.dispose();
   }
 
-  clearText() {
-    fieldText.clear();
-  }
+  StreamController<MessageEntry> _chat = StreamController<MessageEntry>();
 
   @override
   Widget build(BuildContext context) {
@@ -95,14 +111,14 @@ class _ChatState extends State<Chat> {
         //delegate: MultiChildLayoutDelegate(),
         children: <Widget>[
           StreamBuilder(
-            stream: watchMessages(0),
-            builder: (context, AsyncSnapshot<List<MessageEntry>> snapshot) {
+            stream: _chat.stream,
+            builder: (context, AsyncSnapshot<MessageEntry> snapshot) {
               if (snapshot.hasData) {
-                addMessages(snapshot.data!);
+                addMessage(snapshot.data!);
 
                 return ListView.builder(
-                  //itemExtent: 
                   reverse: true,
+                  controller: _scrollController,
                   itemCount: _messages.length,
                   shrinkWrap: true,
                   padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -152,7 +168,8 @@ class _ChatState extends State<Chat> {
                   SizedBox(width: 15,),
                   Expanded(
                     child: TextField(
-                      controller: fieldText,
+                      focusNode: _focusNode,
+                      controller: _textEntryField,
                       decoration: InputDecoration(
                         hintText: "Write message...",
                         hintStyle: TextStyle(color: Colors.black54),
@@ -160,7 +177,15 @@ class _ChatState extends State<Chat> {
                       ),
                       onSubmitted: (String value) {
                         sendMessage(value);
-                        clearText();
+                        _textEntryField.clear();
+                        _focusNode.requestFocus();
+                        /*
+                        _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: const Duration(milliseconds: 100),
+                          curve: Curves.easeOut
+                        );
+                        */
                       },
                     ),
                   ),
@@ -185,7 +210,11 @@ class _ChatState extends State<Chat> {
     relays.sendMessage(content);
   }
 
-  void addMessages(List<MessageEntry> entries) {
+  void addMessage(MessageEntry entry) {
+    _messages.insert(0, entry);
+  }
+
+  void addMessages1(List<MessageEntry> entries) {
     for (final message in entries.sublist(_index)) {
       _messages.add(message);
     }

@@ -34,7 +34,6 @@ Future<void> createEvent(nostr.Event event, [String? plaintext]) async {
   if (plaintext == null) {
     bool decryptError = false;
     try {
-      // TODO: Consider not storing the plaintext
       plaintext = (event as nostr.EncryptedDirectMessage).getPlaintext(getKey('bob', 'priv'));
     } catch(err) {
       decryptError = true;
@@ -129,11 +128,6 @@ Stream<List<MessageEntry>> watchMessages(int index) async* {
     database
       .select(database.events)
       ..where((t) => t.rowId.isBiggerOrEqualValue(index))
-      ..orderBy([(t) => OrderingTerm(
-           expression: t.createdAt,
-           mode: OrderingMode.desc,
-        )]
-      )
     ).watch();
   await for (final entryList in entries) {
     List<NostrEvent> events = nostrEvents(entryList);
