@@ -30,7 +30,7 @@ class Contacts extends Table {
 
 class Events extends Table {
   /// All events table
-  IntColumn get columnId => integer().autoIncrement()();
+  IntColumn get rowId => integer().autoIncrement()();
   TextColumn get id => text().unique().withLength(min: 0, max: 64)();
   TextColumn get pubkey => text().withLength(min: 64, max: 64)();
   TextColumn get content => text().withLength(min: 0, max: 1024)();

@@ -21,7 +21,33 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  DateTime? lastSeen;
+  int _index = 0;
+  List<MessageEntry> _messages = [];
+  final TextEditingController fieldText = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    fieldText.addListener(() {
+      final String text = fieldText.text;
+      fieldText.value = fieldText.value.copyWith(
+        text: text,
+        selection:
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    fieldText.dispose();
+    super.dispose();
+  }
+
+  clearText() {
+    fieldText.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +95,7 @@ class _ChatState extends State<Chat> {
         //delegate: MultiChildLayoutDelegate(),
         children: <Widget>[
           StreamBuilder(
-            stream: watchMessages(),
+            stream: watchMessages(0),
             builder: (context, AsyncSnapshot<List<MessageEntry>> snapshot) {
               if (snapshot.hasData) {
                 addMessages(snapshot.data!);
@@ -77,21 +103,21 @@ class _ChatState extends State<Chat> {
                 return ListView.builder(
                   //itemExtent: 
                   reverse: true,
-                  itemCount: messages.length,
+                  itemCount: _messages.length,
                   shrinkWrap: true,
                   padding: EdgeInsets.only(top: 10, bottom: 10),
                   itemBuilder: (context, index) {
                     return Container(
                       padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
                       child: Align(
-                        alignment: (messages[index].type == "receiver" ? Alignment.topLeft:Alignment.topRight),
+                        alignment: (_messages[index].type == "receiver" ? Alignment.topLeft:Alignment.topRight),
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: (messages[index].type  == "receiver" ? Colors.grey.shade400:Colors.blue[400]),
+                            color: (_messages[index].type  == "receiver" ? Colors.grey.shade400:Colors.blue[400]),
                           ),
                           padding: EdgeInsets.all(16),
-                          child: Text(messages[index].content, style: TextStyle(fontSize: 15),),
+                          child: Text(_messages[index].content, style: TextStyle(fontSize: 15),),
                         ),
                       ),
                     );
@@ -126,16 +152,21 @@ class _ChatState extends State<Chat> {
                   SizedBox(width: 15,),
                   Expanded(
                     child: TextField(
+                      controller: fieldText,
                       decoration: InputDecoration(
                         hintText: "Write message...",
                         hintStyle: TextStyle(color: Colors.black54),
-                        border: InputBorder.none
+                        border: InputBorder.none,
                       ),
+                      onSubmitted: (String value) {
+                        sendMessage(value);
+                        clearText();
+                      },
                     ),
                   ),
                   SizedBox(width: 15,),
                   FloatingActionButton(
-                    onPressed: sendMessage('hi'),
+                    onPressed: () {},
                     child: Icon(Icons.send, color: Colors.white,size: 18,),
                     backgroundColor: Colors.blue,
                     elevation: 0,
@@ -155,13 +186,9 @@ class _ChatState extends State<Chat> {
   }
 
   void addMessages(List<MessageEntry> entries) {
-    for (final message in entries) {
-      if (lastSeen == null || message.timestamp.isAfter(lastSeen!)) {
-        lastSeen = message.timestamp;
-      }
-      messages.add(message);
+    for (final message in entries.sublist(_index)) {
+      _messages.add(message);
     }
+    _index = entries.length;
   }
 }
-
-List<MessageEntry> messages = [];

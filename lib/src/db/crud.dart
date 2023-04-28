@@ -72,7 +72,8 @@ Future<void> updateEventPlaintext(
 
 class NostrEvent extends nostr.EncryptedDirectMessage {
   final String plaintext;
-  NostrEvent(nostr.Event event, this.plaintext): super(event, verify: false);
+  final int index;
+  NostrEvent(nostr.Event event, this.plaintext, this.index): super(event, verify: false);
 }
 
 List<NostrEvent> nostrEvents(List<Event> entries) {
@@ -87,7 +88,7 @@ List<NostrEvent> nostrEvents(List<Event> entries) {
     event.sig = entry.sig;
     assert(event.kind == 4);
     // TODO: Need TAGS for id to pass isValid()
-    events.add(NostrEvent(event, entry.plaintext!));
+    events.add(NostrEvent(event, entry.plaintext!, entry.rowId));
   }
   return events;
 }
@@ -99,10 +100,35 @@ Future<List<NostrEvent>> readEvent(String id) async {
   return nostrEvents(entries);
 }
 
-Stream<List<MessageEntry>> watchMessages([DateTime? from]) async* {
+Future<List<MessageEntry>> readMessages(int index) async {
+  List<Event> entries = await
+    (database
+      .select(database.events)
+      ..where((t) => t.rowId.isBiggerOrEqualValue(index))
+      ..orderBy([(t) => OrderingTerm(
+           expression: t.createdAt,
+           mode: OrderingMode.desc,
+      )])).get();
+  List<MessageEntry> messages = [];
+  List<NostrEvent> events = nostrEvents(entries);
+  for (final event in events) {
+    messages.add(MessageEntry(
+        content: event.plaintext,
+        type: "receiver",
+        timestamp: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
+        contact: contact.Contact(event.pubkey),
+        index: event.index,
+      )
+    );
+  }
+  return messages;
+}
+
+Stream<List<MessageEntry>> watchMessages(int index) async* {
   Stream<List<Event>> entries = await (
     database
       .select(database.events)
+      ..where((t) => t.rowId.isBiggerOrEqualValue(index))
       ..orderBy([(t) => OrderingTerm(
            expression: t.createdAt,
            mode: OrderingMode.desc,
@@ -118,6 +144,7 @@ Stream<List<MessageEntry>> watchMessages([DateTime? from]) async* {
           type: "receiver",
           timestamp: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
           contact: contact.Contact(event.pubkey),
+          index: event.index,
         )
       );
     }
