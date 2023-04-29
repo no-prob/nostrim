@@ -68,9 +68,9 @@ class Relay {
     // TODO: check the return OK if relay supports that NIP
   }
 
-  Future<void> sendEvent(Event event) async {
+  Future<void> sendEvent(Event event, [String? plaintext]) async {
     await send(event.serialize());
-    createEvent(event);
+    createEvent(event, plaintext: plaintext);
   }
 }
 
@@ -110,16 +110,16 @@ class Relays {
 
   sendMessage(String content) {
     EncryptedDirectMessage event = EncryptedDirectMessage.redact(
-      getKey('alice', 'priv'),
-      getKey('bob', 'pub'),
+      getKey('bob', 'priv'), // senderPrivkey
+      getKey('alice', 'pub'), // receiverPubkey
       content,
     );
-    sendEvent(event);
+    sendEvent(event, content);
   }
 
-  sendEvent(Event event) {
+  sendEvent(Event event, [String? plaintext]) {
     relays?.forEach((relay) {
-      relay.sendEvent(event);
+      relay.sendEvent(event, plaintext);
     });
   }
 
@@ -129,4 +129,3 @@ class Relays {
     });
   }
 }
-

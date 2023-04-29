@@ -70,11 +70,11 @@ class _ChannelState extends State<Channel> {
               return Container(
                 padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
                 child: Align(
-                  alignment: (messages[index].type == "receiver"?Alignment.topLeft:Alignment.topRight),
+                  alignment: (messages[index].source == "remote"?Alignment.topLeft:Alignment.topRight),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: (messages[index].type  == "receiver"?Colors.grey.shade400:Colors.blue[400]),
+                      color: (messages[index].source == "remote"?Colors.grey.shade400:Colors.blue[400]),
                     ),
                     padding: EdgeInsets.all(16),
                     child: Text(messages[index].content, style: TextStyle(fontSize: 15),),

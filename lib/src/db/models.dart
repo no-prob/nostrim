@@ -33,6 +33,7 @@ class Events extends Table {
   IntColumn get rowId => integer().autoIncrement()();
   TextColumn get id => text().unique().withLength(min: 0, max: 64)();
   TextColumn get pubkey => text().withLength(min: 64, max: 64)();
+  TextColumn get receiver => text().withLength(min: 64, max: 64)(); // still have to do tags!
   TextColumn get content => text().withLength(min: 0, max: 1024)();
   // TODO: Consider not storing the plaintext.
   TextColumn get plaintext => text().withLength(min: 0, max: 1024)();

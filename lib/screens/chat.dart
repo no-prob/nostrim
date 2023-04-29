@@ -51,7 +51,6 @@ class _ChatState extends State<Chat> {
     watchMessages(_index).listen((entries) {
       for (final message in entries) {
         _index = message.index;
-        message.content += " ${message.index}";
         _chat.add(message);
       }
     });
@@ -126,11 +125,11 @@ class _ChatState extends State<Chat> {
                     return Container(
                       padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
                       child: Align(
-                        alignment: (_messages[index].type == "receiver" ? Alignment.topLeft:Alignment.topRight),
+                        alignment: (_messages[index].source == "remote" ? Alignment.topLeft:Alignment.topRight),
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: (_messages[index].type  == "receiver" ? Colors.grey.shade400:Colors.blue[400]),
+                            color: (_messages[index].source == "remote" ? Colors.green.shade400:Colors.blue[400]),
                           ),
                           padding: EdgeInsets.all(16),
                           child: Text(_messages[index].content, style: TextStyle(fontSize: 15),),

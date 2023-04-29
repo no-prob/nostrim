@@ -7,17 +7,18 @@ import '../../models/message_entry.dart';
 import '../contact.dart' as contact;
 import '../logging.dart';
 
-Future<void> createEvent(nostr.Event event, [String? plaintext]) async {
+Future<void> createEvent(nostr.Event event, {String? plaintext, String? receivedBy,}) async {
   try {
     await database.into(database.events).insert(
           EventsCompanion.insert(
             id: event.id,
             pubkey: event.pubkey,
+            receiver: (event as nostr.EncryptedDirectMessage).receiver!,
             content: event.content,
             createdAt: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
             kind: event.kind,
             sig: event.sig,
-            plaintext: "",
+            plaintext: (plaintext != null) ? plaintext : "",
             decryptError: false,
           ),
           onConflict: DoNothing(),
@@ -53,6 +54,7 @@ Future<void> updateEventPlaintext(
   final insert = EventsCompanion.insert(
       id: event.id,
       pubkey: event.pubkey,
+      receiver: (event as nostr.EncryptedDirectMessage).receiver!,
       content: event.content,
       createdAt: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
       kind: event.kind,
@@ -99,6 +101,22 @@ Future<List<NostrEvent>> readEvent(String id) async {
   return nostrEvents(entries);
 }
 
+List<MessageEntry> messageEntries(List<NostrEvent> events) {
+  List<MessageEntry> messages = [];
+  for (final event in events) {
+    messages.add(MessageEntry(
+        content: event.plaintext,
+        // check for if the pubkey is bob then he is the sender, ie local, sending to self
+        source: (event.pubkey != getKey('bob', 'pub')) ? "remote" : "local",
+        timestamp: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
+        contact: contact.Contact(event.pubkey),
+        index: event.index,
+      )
+    );
+  }
+  return messages;
+}
+
 Future<List<MessageEntry>> readMessages(int index) async {
   List<Event> entries = await
     (database
@@ -108,18 +126,8 @@ Future<List<MessageEntry>> readMessages(int index) async {
            expression: t.createdAt,
            mode: OrderingMode.desc,
       )])).get();
-  List<MessageEntry> messages = [];
   List<NostrEvent> events = nostrEvents(entries);
-  for (final event in events) {
-    messages.add(MessageEntry(
-        content: event.plaintext,
-        type: "receiver",
-        timestamp: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
-        contact: contact.Contact(event.pubkey),
-        index: event.index,
-      )
-    );
-  }
+  List<MessageEntry> messages = messageEntries(events);
   return messages;
 }
 
@@ -131,17 +139,7 @@ Stream<List<MessageEntry>> watchMessages(int index) async* {
     ).watch();
   await for (final entryList in entries) {
     List<NostrEvent> events = nostrEvents(entryList);
-    List<MessageEntry> messages = [];
-    for (final event in events) {
-      messages.add(MessageEntry(
-          content: event.plaintext,
-          type: "receiver",
-          timestamp: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
-          contact: contact.Contact(event.pubkey),
-          index: event.index,
-        )
-      );
-    }
+    List<MessageEntry> messages = messageEntries(events);
     yield messages;
   }
 }
