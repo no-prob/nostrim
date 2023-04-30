@@ -7,34 +7,10 @@ import '../../models/message_entry.dart';
 import '../contact.dart' as contact;
 import '../logging.dart';
 
-Future<void> createEvent(nostr.Event event, {String? plaintext, String? fromRelay,}) async {
-  fromRelay ??= "";
-  try {
-    await database.into(database.events).insert(
-          EventsCompanion.insert(
-            id: event.id,
-            pubkey: event.pubkey,
-            receiver: (event as nostr.EncryptedDirectMessage).receiver!,
-            content: event.content,
-            createdAt: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
-            fromRelay: fromRelay,
-            kind: event.kind,
-            sig: event.sig,
-            plaintext: (plaintext != null) ? plaintext : "",
-            decryptError: false,
-          ),
-          onConflict: DoNothing(),
-        );
-  } catch(err) {
-    if (!err.toString().contains("UNIQUE constraint failed")) {
-      // ignore dups
-      print(err);
-    } else {
-      // return from here because the entry already exists.
-      return;
-    }
-  }
-  if (plaintext == null) {
+
+Future<void> createEventHELPER(nostr.Event event, {String? plaintext, String? fromRelay,}) async {
+  bool locallySent = (event.pubkey == getKey('bob', 'pub'));
+  if (plaintext == null && !locallySent) {
     bool decryptError = false;
     try {
       plaintext = (event as nostr.EncryptedDirectMessage).getPlaintext(getKey('bob', 'priv'));
@@ -44,8 +20,37 @@ Future<void> createEvent(nostr.Event event, {String? plaintext, String? fromRela
     }
     updateEventPlaintext(event, decryptError ? "" : plaintext!, decryptError, fromRelay!);
   }
-  plaintext ??= "<decrypt error>";
   logEvent(event, plaintext);
+}
+
+
+Future<void> createEvent(nostr.Event event, {String? plaintext, String? fromRelay,}) async {
+  fromRelay ??= "";
+  database.into(database.events).insert(
+    EventsCompanion.insert(
+      id: event.id,
+      pubkey: event.pubkey,
+      receiver: (event as nostr.EncryptedDirectMessage).receiver!,
+      content: event.content,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
+      fromRelay: fromRelay,
+      kind: event.kind,
+      sig: event.sig,
+      plaintext: (plaintext != null) ? plaintext : "",
+      decryptError: false,
+    ),
+    onConflict: DoNothing(),
+  ).then((_) {
+    // TODO: Either decrypt them later, on demand, OR do this in a separate thread.
+    createEventHELPER(event, plaintext: plaintext, fromRelay: fromRelay);
+  }).catchError((err) {
+    if (err.toString().contains("UNIQUE constraint failed")) {
+      // the entry already exists.
+      return;
+    }
+    print(err);
+    createEventHELPER(event, plaintext: plaintext, fromRelay: fromRelay);
+  });
 }
 
 Future<void> updateEventPlaintext(
@@ -66,13 +71,10 @@ Future<void> updateEventPlaintext(
       plaintext: plaintext,
       decryptError: decryptError,
   );
-  try {
-    await database
-        .into(database.events)
-        .insert(insert, mode: InsertMode.insertOrReplace);
-  } catch(err) {
-    print(err);
-  }
+  database
+    .into(database.events)
+    .insert(insert, mode: InsertMode.insertOrReplace)
+    .catchError((err) => print(err));
 }
 
 class NostrEvent extends nostr.EncryptedDirectMessage {
