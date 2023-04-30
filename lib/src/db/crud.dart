@@ -7,7 +7,8 @@ import '../../models/message_entry.dart';
 import '../contact.dart' as contact;
 import '../logging.dart';
 
-Future<void> createEvent(nostr.Event event, {String? plaintext, String? receivedBy,}) async {
+Future<void> createEvent(nostr.Event event, {String? plaintext, String? fromRelay,}) async {
+  fromRelay ??= "";
   try {
     await database.into(database.events).insert(
           EventsCompanion.insert(
@@ -16,6 +17,7 @@ Future<void> createEvent(nostr.Event event, {String? plaintext, String? received
             receiver: (event as nostr.EncryptedDirectMessage).receiver!,
             content: event.content,
             createdAt: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
+            fromRelay: fromRelay,
             kind: event.kind,
             sig: event.sig,
             plaintext: (plaintext != null) ? plaintext : "",
@@ -40,7 +42,7 @@ Future<void> createEvent(nostr.Event event, {String? plaintext, String? received
       decryptError = true;
       print(err);
     }
-    updateEventPlaintext(event, decryptError ? "" : plaintext!, decryptError);
+    updateEventPlaintext(event, decryptError ? "" : plaintext!, decryptError, fromRelay!);
   }
   plaintext ??= "<decrypt error>";
   logEvent(event, plaintext);
@@ -50,6 +52,7 @@ Future<void> updateEventPlaintext(
     nostr.Event event,
     String plaintext,
     bool decryptError,
+    String fromRelay,
   ) async {
   final insert = EventsCompanion.insert(
       id: event.id,
@@ -57,6 +60,7 @@ Future<void> updateEventPlaintext(
       receiver: (event as nostr.EncryptedDirectMessage).receiver!,
       content: event.content,
       createdAt: DateTime.fromMillisecondsSinceEpoch(event.createdAt * 1000),
+      fromRelay: fromRelay,
       kind: event.kind,
       sig: event.sig,
       plaintext: plaintext,

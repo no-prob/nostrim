@@ -21,7 +21,6 @@ class Relay {
   Relay(this.name, this.url, [filters]) {
     this.filters = this.filters + (filters ?? []);
     socketMap[name] = socketConnect(url);
-    //listen();
     subscribe();
   }
 
@@ -46,7 +45,17 @@ class Relay {
     socket.sink.add(requestWithFilter.serialize());
   }
 
-  void listen(void Function(dynamic) func) {
+  void listen([void Function(dynamic)? func=null]) {
+    func ??= (data) {
+      if (data == null || data == 'null') {
+        return;
+      }
+      Message m = Message.deserialize(data);
+      if ([m.type,].contains("EVENT")) {
+        Event event = m.message;
+        createEvent(event, fromRelay: name);
+      }
+    };
     socket.stream.listen(
       func,
       onError: (err) => print("Error in creating connection to $url."),
@@ -69,8 +78,9 @@ class Relay {
   }
 
   Future<void> sendEvent(Event event, [String? plaintext]) async {
-    await send(event.serialize());
-    createEvent(event, plaintext: plaintext);
+    // we don't await it, but we might want to to get confirmation
+    send(event.serialize());
+    createEvent(event, plaintext: plaintext, fromRelay: name);
   }
 }
 
@@ -123,7 +133,7 @@ class Relays {
     });
   }
 
-  void listen(dynamic func) {
+  void listen([void Function(dynamic)? func=null]) {
     relays?.forEach((relay) {
       relay.listen(func);
     });

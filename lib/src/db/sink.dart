@@ -14,17 +14,6 @@ class EventSink {
 
   listen() {
     Relays relays = getRelays();
-    relays?.listen(
-      (data) {
-        if (data == null || data == 'null') {
-          return;
-        }
-        Message m = Message.deserialize(data);
-        if ([m.type,].contains("EVENT")) {
-          Event event = m.message;
-          createEvent(event);
-        }
-      },
-    );
+    relays?.listen();
   }
 }
